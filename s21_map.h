@@ -204,7 +204,90 @@ class map {
       return !(*this == other);
     }
     const Node* get_current() const { return current_ ? current_ : nullptr; }
+  /////////////////////////////////////////////////////////////////////////////
+  void draw() {
+    if (!root_) return;
+    int max_key_length = 0;
+    std::vector<std::vector<Node*>> matrix;
+    std::queue<std::tuple<Node*, size_t, size_t>> q;
+    q.emplace(root_, 0, 0);
 
+    while (!q.empty()) {
+      auto [node, level, pos] = q.front();
+      q.pop();
+      if (level >= matrix.size()) matrix.resize(level + 1);
+      if (pos >= matrix[level].size()) matrix[level].resize(pos + 1, nullptr);
+      matrix[level][pos] = node;
+      if (node) {
+        max_key_length =  std::max(max_key_length, static_cast<int>(std::to_string(node->kv.first).length()));
+        q.emplace(node->left, level + 1, 2 * pos);
+        q.emplace(node->right, level + 1, 2 * pos + 1);
+      }
+    }
+  //   if (!matrix.empty() && std::all_of(matrix.back().begin(), matrix.back().end(), [](Node* node) { return node == nullptr; })) {
+  //     matrix.pop_back();
+  // }
+    std::vector<std::string> rows;
+    for (auto it = matrix.rbegin(); it != matrix.rend(); ++it) {
+      std::string row;
+      std::string slash;
+      std::string line;
+      bool even = true;
+      for (auto inner_it = it->begin(); inner_it != it->end(); ++inner_it) {
+        auto [r, s, l] = center_number(*inner_it, max_key_length, even);
+        row += r;
+        slash += s;
+        line += l;
+        even = !even;
+      }
+      row += '\n';
+      slash += '\n';
+      line += '\n';
+      rows.push_back(row);
+      rows.push_back(slash);
+      rows.push_back(line);
+      max_key_length *= 2;
+    }
+    rows.pop_back();
+    rows.pop_back();
+    std::reverse(rows.begin(), rows.end());
+
+    for (auto row : rows) std::cout << row;
+  }
+
+  std::tuple<std::string, std::string, std::string> center_number(Node* node, int width, bool even) {
+    std::string num_str;
+    std::string slash;
+    std::string line;
+    if (node) {
+      num_str = std::to_string(node->kv.first);
+      int padding = width - num_str.size();
+      int left_pad = padding / 2;
+      int right_pad = padding - left_pad;
+      if (node->color == Color::BLACK)
+        num_str = "\033[1;30m" + num_str + "\033[0m";
+      else
+        num_str = "\033[1;31m" + num_str + "\033[0m";
+
+      num_str =
+          std::string(left_pad, ' ') + num_str + std::string(right_pad, ' ');
+
+      padding = width / 2;
+      if (even) {
+        slash = std::string(padding, ' ') + "/" + std::string(padding - 1, ' ');
+        line = std::string(padding + 1, ' ') + std::string(padding - 1, '-');
+      } else {
+        slash =
+            std::string(padding - 1, ' ') + "\\" + std::string(padding, ' ');
+        line = std::string(padding - 1, '-') + std::string(padding + 1, ' ');
+      }
+    
+    } else {
+      num_str = slash = line = std::string(width, ' ');
+    }
+  
+    return {num_str, slash, line};
+  }
    private:
     const Node* current_;
     const Node* tail_;
