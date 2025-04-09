@@ -68,16 +68,37 @@ This will delete all compiled object files, executables, libraries, and distribu
 #include <iostream>
 
 int main() {
-    lace::map<int, std::string> my_map;
-    my_map.insert({1, "one"});
-    my_map.insert({2, "two"});
+  lace::map<int, int> tree = {
+      {5, 0}, {-1, 0}, {6, 0}, {10, 0}, {11, 0},
+  };
 
-    for (auto it = my_map.begin(); it != my_map.end(); ++it) {
-        std::cout << it->first << ": " << it->second << '\n';
-    }
+  tree.draw();
 
-    return 0;
+  tree.erase(5);
+  tree.draw();
+
+  return 0;
 }
+```
+### 🖥️ Output
+
+```
+        5        
+     ------     
+    /      \    
+   -1      10   
+           --   
+          /  \  
+         6   11 
+                
+
+       6        
+     ------     
+    /      \    
+   -1      10   
+            -   
+             \  
+             11 
 ```
 
 ## 🚧 Planned

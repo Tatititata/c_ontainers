@@ -555,7 +555,7 @@ class map {
     int max_key_length = 0;
     std::vector<std::vector<Node*>> matrix;
     lace::queue<std::tuple<Node*, size_t, size_t>> q;
-    q.emplace(root_, 0, 0);
+    q.push(std::make_tuple(root_, 0, 0));
 
     while (!q.empty()) {
       auto [node, level, pos] = q.front();
@@ -567,8 +567,8 @@ class map {
         max_key_length =
             std::max(max_key_length,
                      static_cast<int>(std::to_string(node->kv.first).length()));
-        q.emplace(node->left, level + 1, 2 * pos);
-        q.emplace(node->right, level + 1, 2 * pos + 1);
+        q.push(std::make_tuple(node->left, level + 1, 2 * pos));
+        q.push(std::make_tuple(node->right, level + 1, 2 * pos + 1));
       }
     }
     //   if (!matrix.empty() && std::all_of(matrix.back().begin(),
