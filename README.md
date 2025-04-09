@@ -4,7 +4,7 @@
 
 # 🧵 lace_c_ontainers
 
-A set of C++ c_ontainers under the `lace::` namespace. This project was created to better understand the internal structure and logic of standard containers.
+A set of C++ c_ontainers under the `lace::` namespace. This project was created to better understand the internal structure and logic of standard c_ontainers.
 
 ## 📦 Implemented c_ontainers
 
