@@ -79,7 +79,7 @@ int main() {
    -1      10   
            --   
           /  \  
-         6   11 
+         <span style="color: red;">6</span>   <span style="color: red;">11</span> 
                 
 
        6        
@@ -88,7 +88,7 @@ int main() {
    -1      10   
             -   
              \  
-             11 
+             <span style="color: red;">11</span> 
 ```
 
 
