@@ -23,8 +23,8 @@ A set of C++ c_ontainers under the `lace::` namespace. This project was created 
 
 ```
 ├── src/ 
-├── unit_tests.h 
-│ └── *.cc 
+│    └── unit_tests.h 
+│           └── *.cc 
 ├── lace_array.h 
 ├── lace_queue.h 
 ├── lace_map.h 
@@ -32,7 +32,8 @@ A set of C++ c_ontainers under the `lace::` namespace. This project was created 
 ├── lace_multiset.h 
 ├── README.md 
 ├── README_rus.md 
-└── Makefile```
+└── Makefile 
+```
 
 ## ⚙️ Build Instructions
 
@@ -40,8 +41,9 @@ Make sure you have a C++17+ compatible compiler and `make` installed.
 
 To build and run tests:
 
-```bash
+```
 make test
+```
 
 ## 🧪 Testing
 
@@ -58,6 +60,25 @@ To remove all generated files:
 ```make clean```
 
 This will delete all compiled object files, executables, libraries, and distribution archives.
+
+## 💡 Usage Example
+
+```
+#include "lace_map.h"
+#include <iostream>
+
+int main() {
+    lace::map<int, std::string> my_map;
+    my_map.insert({1, "one"});
+    my_map.insert({2, "two"});
+
+    for (auto it = my_map.begin(); it != my_map.end(); ++it) {
+        std::cout << it->first << ": " << it->second << '\n';
+    }
+
+    return 0;
+}
+```
 
 ## 🚧 Planned
 

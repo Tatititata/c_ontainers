@@ -22,16 +22,17 @@
 ## 📁 Структура проекта
 
 ```
-├── src/
-├── unit_tests.h
-│   └── *.cc
-├── lace_array.h
-├── lace_queue.h
-├── lace_map.h
-├── lace_set.h
-├── lace_multiset.h
-├── README.md
-└── Makefile
+├── src/ 
+│    └── unit_tests.h 
+│           └── *.cc 
+├── lace_array.h 
+├── lace_queue.h 
+├── lace_map.h 
+├── lace_set.h 
+├── lace_multiset.h 
+├── README.md 
+├── README_rus.md 
+└── Makefile 
 ```
 
 ## 🧪 Тестирование
@@ -48,6 +49,25 @@
 
 ```make clean```
 
+
+## 💡  Примет использования
+
+```
+#include "lace_map.h"
+#include <iostream>
+
+int main() {
+    lace::map<int, std::string> my_map;
+    my_map.insert({1, "one"});
+    my_map.insert({2, "two"});
+
+    for (auto it = my_map.begin(); it != my_map.end(); ++it) {
+        std::cout << it->first << ": " << it->second << '\n';
+    }
+
+    return 0;
+}
+```
 
 ## 🚧 В планах
 
