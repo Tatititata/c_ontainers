@@ -1,9 +1,9 @@
-#ifndef _S21_MULTISET_H_
-#define _S21_MULTISET_H_
+#ifndef _LACE_MULTISET_H_
+#define _LACE_MULTISET_H_
 
-#include "s21_map.h"
+#include "lace_map.h"
 
-namespace s21 {
+namespace lace {
 
 template <typename Key>
 class multiset {
@@ -294,12 +294,31 @@ class multiset {
 
   std::pair<iterator, iterator> equal_range(const key_type& key) {
     auto tree_pair = tree_.equal_range(key);
-    return {iterator(tree_pair.first), iterator(tree_pair.second)};
+    return {iterator(tree_pair.first, 0), iterator(tree_pair.second, 0)};
   }
 
-  iterator lower_bound(const key_type& key) { return tree_.lower_bound(key); }
+  iterator lower_bound(const key_type& key) {
+    return iterator(tree_.lower_bound(key), 0);
+  }
 
-  iterator upper_bound(const key_type& key) { return tree_.upper_bound(key); }
+  iterator upper_bound(const key_type& key) {
+    return iterator(tree_.upper_bound(key), 0);
+  }
+
+  const_iterator lower_bound(const key_type& key) const {
+    return const_iterator(tree_.lower_bound(key), 0);
+  }
+
+  const_iterator upper_bound(const key_type& key) const {
+    return const_iterator(tree_.upper_bound(key), 0);
+  }
+
+  std::pair<const_iterator, const_iterator> equal_range(
+      const key_type& key) const {
+    auto tree_pair = tree_.equal_range(key);
+    return {const_iterator(tree_pair.first, 0),
+            const_iterator(tree_pair.second, 0)};
+  }
 
   template <typename... Args>
   std::vector<std::pair<iterator, bool>> insert_many(Args&&... args) {
@@ -316,6 +335,6 @@ class multiset {
 
 };  // multiset
 
-}  // namespace s21
+}  // namespace lace
 
-#endif  // _S21_MULTISET_H_
+#endif  // _lace_MULTISET_H_

@@ -3,13 +3,13 @@
 #include <set>
 #include <utility>
 
-#include "../s21_multiset.h"
+#include "../lace_multiset.h"
 
-// заменить на s21::multiset
-using MultisetInts = s21::multiset<int>;
-using MultisetStrings = s21::multiset<std::string>;
+// заменить на lace::multiset
+using MultisetInts = lace::multiset<int>;
+using MultisetStrings = lace::multiset<std::string>;
 
-// не менять на s21::multiset
+// не менять на lace::multiset
 using OriginalMultisetInts = std::multiset<int>;
 
 bool checkMultisetsEqual(MultisetInts our_multiset,
@@ -286,7 +286,7 @@ TEST(MultisetMergeTest, IteratorOnNotOverlapping) {
   ASSERT_NO_THROW(IterateThrough(second));
 }
 
-// /* РАСКОММЕНТИРОВАТЬ ПОСЛЕ ПОДСТАНОВКИ s21::multiset в MultisetInts */
+// /* РАСКОММЕНТИРОВАТЬ ПОСЛЕ ПОДСТАНОВКИ lace::multiset в MultisetInts */
 
 TEST(MultisetLookupTest, NonEmpty) {
   MultisetStrings first = {"a", "b"};
@@ -307,10 +307,10 @@ TEST(MultisetLookupTest, Empty) {
   ASSERT_FALSE(second.contains(2));
 }
 
-TEST(SetIteratorTest, ConstAndNormalIterator1) {
+TEST(MultiSetIteratorTest, ConstAndNormalIterator) {
   MultisetInts set = {1};
-  s21::multiset<int>::const_iterator i = set.begin();
-  s21::multiset<int>::iterator ci = set.begin();
+  lace::multiset<int>::const_iterator i = set.begin();
+  lace::multiset<int>::iterator ci = set.begin();
   ASSERT_EQ(i, ci);
 }
 
@@ -417,4 +417,213 @@ TEST(MultisetLookupTest, UpperBoundNonEmpty) {
 TEST(MultisetLookupTest, UpperBoundEmpty) {
   MultisetInts first;
   ASSERT_EQ(first.end(), first.lower_bound(10));
+}
+
+TEST(MultisetAssignmentTest, CopyAssignment) {
+  lace::multiset<int> first = {1, 2, 3, 4, 5, 5, 6};
+  lace::multiset<int> second;
+  second = first;
+  ASSERT_EQ(first.size(), second.size());
+  ASSERT_TRUE(std::equal(first.begin(), first.end(), second.begin()));
+}
+
+TEST(MultisetAssignmentTest, SelfAssignmentCopy) {
+  lace::multiset<int> first = {7, 8, 9};
+  first = first;
+  ASSERT_EQ(first.size(), 3);
+  ASSERT_TRUE(first.contains(7));
+  ASSERT_TRUE(first.contains(8));
+  ASSERT_TRUE(first.contains(9));
+}
+
+TEST(MultisetAssignmentTest, ExceptionSafety) {
+  MultisetInts source = {1, 2, 3};
+  MultisetInts target;
+  EXPECT_NO_THROW(target = source);
+}
+
+TEST(MultisetAssignmentTest, MoveAssignment) {
+  lace::multiset<int> first = {10, 20, 30, 40};
+  lace::multiset<int> second = {1, 2, 3};
+
+  second = std::move(first);
+
+  ASSERT_TRUE(first.empty());
+  ASSERT_EQ(second.size(), 4);
+  ASSERT_TRUE(second.contains(10));
+  ASSERT_TRUE(second.contains(20));
+  ASSERT_TRUE(second.contains(30));
+  ASSERT_TRUE(second.contains(40));
+}
+
+TEST(MultisetAssignmentTest, MoveAssignment2) {
+  lace::multiset<int> first = {10, 20, 30, 40};
+  lace::multiset<int> second;
+
+  second = std::move(first);
+
+  ASSERT_TRUE(first.empty());
+  ASSERT_EQ(second.size(), 4);
+  ASSERT_TRUE(second.contains(10));
+  ASSERT_TRUE(second.contains(20));
+}
+
+struct ThrowOnCopy {
+  int id;  // Уникальный идентификатор для сравнения
+
+  ThrowOnCopy(int id = 0) : id(id) {}
+  ThrowOnCopy(const ThrowOnCopy& other) : id(other.id) {
+    throw std::runtime_error("Copy failed");
+  }
+  ThrowOnCopy(ThrowOnCopy&&) = default;
+
+  // Добавляем operator<
+  bool operator<(const ThrowOnCopy& other) const { return id < other.id; }
+  bool operator==(const ThrowOnCopy& other) const { return id == other.id; }
+  bool operator>(const ThrowOnCopy& other) const { return id > other.id; }
+  bool operator!=(const ThrowOnCopy& other) const { return id != other.id; }
+};
+
+TEST(MultisetTest, InsertThrowsOnAllocationFailure) {
+  lace::multiset<ThrowOnCopy> s;
+  ThrowOnCopy value(42);  // Указываем id для сравнения
+
+  EXPECT_THROW(s.insert(value), std::runtime_error);
+  EXPECT_TRUE(s.empty());
+}
+
+struct ThrowOnMove {
+  int id;
+
+  ThrowOnMove(int id = 0) : id(id) {}
+  ThrowOnMove(const ThrowOnMove&) = default;
+  ThrowOnMove(ThrowOnMove&& other) : id(other.id) {
+    throw std::runtime_error("Move failed");
+  }
+
+  bool operator<(const ThrowOnMove& other) const { return id < other.id; }
+  bool operator==(const ThrowOnMove& other) const { return id == other.id; }
+  bool operator>(const ThrowOnMove& other) const { return id > other.id; }
+  bool operator!=(const ThrowOnMove& other) const { return id != other.id; }
+};
+
+TEST(MultisetTest, MoveInsertThrows) {
+  lace::multiset<ThrowOnMove> s;
+  ThrowOnMove value(42);
+
+  EXPECT_THROW(s.insert(std::move(value)), std::runtime_error);
+  EXPECT_TRUE(s.empty());
+  EXPECT_EQ(value.id, 42);
+}
+
+TEST(MultisetTest, InsertMany) {
+  lace::multiset<int> s;
+  s.insert_many(1, 2, 3);
+  ASSERT_EQ(s.size(), 3);
+  ASSERT_TRUE(s.contains(1));
+  ASSERT_TRUE(s.contains(2));
+  ASSERT_TRUE(s.contains(3));
+}
+
+TEST(MultisetTest, EqualRange_KeyNotFound) {
+  lace::multiset<int> ms = {10, 20, 30};
+
+  auto [first1, last1] = ms.equal_range(5);
+  EXPECT_EQ(first1, ms.begin());
+  EXPECT_EQ(last1, ms.begin());
+
+  auto [first2, last2] = ms.equal_range(25);
+  EXPECT_EQ(*first2, 30);
+  EXPECT_EQ(first2, last2);
+
+  auto [first3, last3] = ms.equal_range(35);
+  EXPECT_EQ(first3, ms.end());
+  EXPECT_EQ(last3, ms.end());
+}
+
+TEST(MultisetTest, EqualRange_SingleMatch) {
+  lace::multiset<int> ms = {10, 20, 30};
+
+  auto [first, last] = ms.equal_range(20);
+  EXPECT_EQ(first, ms.find(20));
+  EXPECT_EQ(last, ms.find(30));
+}
+
+TEST(MultisetTest, EqualRange_MultipleMatches) {
+  lace::multiset<int> ms = {10, 20, 20, 20, 30};
+
+  auto [first, last] = ms.equal_range(20);
+  EXPECT_EQ(*first, 20);
+  EXPECT_EQ(*last, 30);
+  EXPECT_EQ(std::distance(first, last), 3);
+}
+
+TEST(MultisetTest, EqualRange_AllElementsMatch) {
+  lace::multiset<int> ms = {15, 15, 15};
+
+  auto [first, last] = ms.equal_range(15);
+  EXPECT_EQ(first, ms.begin());
+  EXPECT_EQ(last, ms.end());
+}
+
+TEST(MultisetTest, EqualRange_EmptyContainer) {
+  lace::multiset<int> ms;
+
+  auto [first, last] = ms.equal_range(10);
+  EXPECT_EQ(first, ms.end());
+  EXPECT_EQ(last, ms.end());
+}
+
+TEST(MultisetTest, EqualRange_FirstElement) {
+  lace::multiset<int> ms = {5, 10, 15};
+  auto [first, last] = ms.equal_range(5);
+  EXPECT_EQ(first, ms.begin());
+  EXPECT_EQ(last, std::next(ms.begin()));
+}
+
+TEST(MultisetTest, EqualRange_LastElement) {
+  lace::multiset<int> ms = {5, 10, 15};
+  auto [first, last] = ms.equal_range(15);
+  EXPECT_EQ(first, std::prev(ms.end()));
+  EXPECT_EQ(last, ms.end());
+}
+
+TEST(MultisetTest, ConstMethods) {
+  const lace::multiset<int> ms = {1, 2, 2, 3};
+
+  auto it = ms.begin();
+  EXPECT_EQ(*it, 1);
+
+  auto cit = ms.find(2);
+  EXPECT_EQ(*cit, 2);
+
+  auto [first, last] = ms.equal_range(2);
+  EXPECT_EQ(std::distance(first, last), 2);
+}
+
+TEST(MultisetTest, EqualRangeFullCoverage) {
+  lace::multiset<int> ms = {10, 20, 20, 30};
+
+  auto [first1, last1] = ms.equal_range(5);
+  EXPECT_EQ(first1, ms.begin());
+  EXPECT_EQ(last1, ms.begin());
+
+  auto [first2, last2] = ms.equal_range(25);
+  EXPECT_EQ(*first2, 30);
+  EXPECT_EQ(first2, last2);
+
+  auto [first3, last3] = ms.equal_range(35);
+  EXPECT_EQ(first3, ms.end());
+  EXPECT_EQ(last3, ms.end());
+}
+
+TEST(MultisetTest, BoundaryCases) {
+  lace::multiset<int> empty_ms;
+  EXPECT_TRUE(empty_ms.empty());
+  EXPECT_EQ(empty_ms.begin(), empty_ms.end());
+
+  EXPECT_GT(empty_ms.max_size(), 0);
+
+  lace::multiset<int> same_ms = {5, 5, 5};
+  EXPECT_EQ(same_ms.count(5), 3);
 }

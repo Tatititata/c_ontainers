@@ -5,10 +5,10 @@
 #include <random>
 #include <vector>
 
-#include "../s21_map.h"
+#include "../lace_map.h"
 
 TEST(RBTreeTestErase, erase_non_existent_key) {
-  s21::map<int, std::string> tree;
+  lace::map<int, std::string> tree;
   tree.insert(1, "one");
   tree.insert(2, "two");
   tree.insert(3, "three");
@@ -26,7 +26,7 @@ TEST(RBTreeTestErase, erase_non_existent_key) {
 }
 
 TEST(RBTreeTestErase, erase_all_elements) {
-  s21::map<int, std::string> tree;
+  lace::map<int, std::string> tree;
   tree.insert(1, "one");
   tree.insert(2, "two");
   tree.insert(3, "three");
@@ -43,7 +43,7 @@ TEST(RBTreeTestErase, erase_all_elements) {
 }
 
 TEST(RBTreeTestErase, erase_from_empty_tree) {
-  s21::map<int, std::string> tree;
+  lace::map<int, std::string> tree;
 
   EXPECT_EQ(tree.size(), 0);
   tree.erase(1);
@@ -53,7 +53,7 @@ TEST(RBTreeTestErase, erase_from_empty_tree) {
 }
 
 TEST(RBTreeTestErase, big_insert_erase) {
-  s21::map<int, int> tree;
+  lace::map<int, int> tree;
   for (size_t i = 0; i < 1000; i++) tree.insert(i, i);
   EXPECT_EQ(tree.size(), 1000);
   for (size_t i = 0; i < 1000; i++) tree.erase(i);
@@ -63,13 +63,13 @@ TEST(RBTreeTestErase, big_insert_erase) {
 }
 
 TEST(RBTreeMergeTests, max_size) {
-  s21::map<int, int> tree;
-  s21::map<int, int> std_tree;
+  lace::map<int, int> tree;
+  lace::map<int, int> std_tree;
   EXPECT_GE(tree.max_size(), std_tree.max_size());
 }
 
 TEST(RBTree, force_fix_right_child) {
-  s21::map<int, int> tree;
+  lace::map<int, int> tree;
   tree.insert({5000, 0});
   tree.insert({2000, 0});
   tree.insert({3000, 0});
@@ -93,7 +93,7 @@ TEST(RBTree, force_fix_right_child) {
 }
 
 TEST(RBTree, huge_deletion) {
-  s21::map<int, int> tree;
+  lace::map<int, int> tree;
   std::vector<int> vec;
   for (size_t i = 0; i < 10000; ++i) {
     vec.push_back(i);
@@ -116,7 +116,7 @@ TEST(RBTree, huge_deletion) {
 }
 
 TEST(RBTree, complex_deletion_case_3_and_4) {
-  s21::map<int, int> tree;
+  lace::map<int, int> tree;
 
   tree.insert({10, 10});
   tree.insert({5, 5});
@@ -136,7 +136,7 @@ TEST(RBTree, complex_deletion_case_3_and_4) {
 }
 
 TEST(RBTree, fix_deletion_case_3_1) {
-  s21::map<int, int> tree;
+  lace::map<int, int> tree;
 
   tree.insert({30, 30});
   tree.insert({20, 20});
@@ -151,7 +151,7 @@ TEST(RBTree, fix_deletion_case_3_1) {
 }
 
 TEST(RBTree, fix_deletion_case_3_2) {
-  s21::map<int, int> tree;
+  lace::map<int, int> tree;
 
   tree.insert({30, 30});
   tree.insert({40, 40});
@@ -166,7 +166,7 @@ TEST(RBTree, fix_deletion_case_3_2) {
 }
 
 TEST(RBTree, fix_deletion_case_3_3) {
-  s21::map<int, int> tree;
+  lace::map<int, int> tree;
 
   tree.insert({30, 30});
   tree.insert({20, 20});
@@ -182,7 +182,7 @@ TEST(RBTree, fix_deletion_case_3_3) {
   ASSERT_TRUE(tree.size() == 7);
 }
 TEST(RBTree, fix_deletion_case_3_4) {
-  s21::map<int, int> tree;
+  lace::map<int, int> tree;
   tree.insert({30, 30});
   tree.insert({20, 20});
   tree.insert({40, 40});
@@ -198,7 +198,7 @@ TEST(RBTree, fix_deletion_case_3_4) {
 }
 
 TEST(RBTree, fix_deletion_case_3_5) {
-  s21::map<int, int> tree;
+  lace::map<int, int> tree;
   tree.insert({50, 50});
   tree.insert({30, 30});
   tree.insert({70, 70});
@@ -214,7 +214,7 @@ TEST(RBTree, fix_deletion_case_3_5) {
 }
 
 TEST(RBTree, fix_deletion_case_3_6) {
-  s21::map<int, int> tree;
+  lace::map<int, int> tree;
   tree.insert({50, 50});
   tree.insert({30, 30});
   tree.insert({70, 70});
@@ -229,7 +229,7 @@ TEST(RBTree, fix_deletion_case_3_6) {
 }
 
 TEST(RBTree, fix_deletion_case_3_7) {
-  s21::map<int, int> tree;
+  lace::map<int, int> tree;
   tree.insert({30, 30});
   tree.insert({20, 20});
   tree.insert({40, 40});
@@ -244,7 +244,7 @@ TEST(RBTree, fix_deletion_case_3_7) {
 }
 
 TEST(RBTree, huge_clear) {
-  s21::map<int, int> tree;
+  lace::map<int, int> tree;
   std::vector<int> vec;
   for (size_t i = 0; i < 10000; ++i) {
     tree.insert({i, i});

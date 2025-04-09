@@ -1,15 +1,15 @@
 #include <gtest/gtest.h>
 
-#include "../s21_multiset.h"
+#include "../lace_multiset.h"
 
 TEST(MultisetTest, default_constructor) {
-  s21::multiset<int> ms;
+  lace::multiset<int> ms;
   ASSERT_TRUE(ms.empty());
   ASSERT_EQ(ms.size(), 0);
 }
 
 TEST(MultisetTest, insert_and_count) {
-  s21::multiset<int> ms;
+  lace::multiset<int> ms;
   ms.insert(1);
   ms.insert(2);
   ms.insert(2);
@@ -20,7 +20,7 @@ TEST(MultisetTest, insert_and_count) {
 }
 
 TEST(MultisetTest, contains) {
-  s21::multiset<int> ms;
+  lace::multiset<int> ms;
   ms.insert(1);
   ms.insert(2);
   ms.insert(2);
@@ -31,7 +31,7 @@ TEST(MultisetTest, contains) {
 }
 
 TEST(MultisetTest, erase) {
-  s21::multiset<int> ms;
+  lace::multiset<int> ms;
   ms.insert(1);
   ms.insert(2);
   ms.insert(2);
@@ -44,7 +44,7 @@ TEST(MultisetTest, erase) {
 }
 
 TEST(MultisetTest, clear) {
-  s21::multiset<int> ms;
+  lace::multiset<int> ms;
   ms.insert(1);
   ms.insert(2);
   ms.insert(2);
@@ -55,11 +55,11 @@ TEST(MultisetTest, clear) {
 }
 
 TEST(MultisetTest, swap) {
-  s21::multiset<int> ms1;
+  lace::multiset<int> ms1;
   ms1.insert(1);
   ms1.insert(2);
 
-  s21::multiset<int> ms2;
+  lace::multiset<int> ms2;
   ms2.insert(3);
   ms2.insert(4);
 
@@ -72,11 +72,11 @@ TEST(MultisetTest, swap) {
 }
 
 TEST(MultisetTest, merge) {
-  s21::multiset<int> ms1;
+  lace::multiset<int> ms1;
   ms1.insert(1);
   ms1.insert(2);
 
-  s21::multiset<int> ms2;
+  lace::multiset<int> ms2;
   ms2.insert(2);
   ms2.insert(3);
 
@@ -89,7 +89,7 @@ TEST(MultisetTest, merge) {
 }
 
 TEST(MultisetTest, equal_range) {
-  s21::multiset<int> ms;
+  lace::multiset<int> ms;
   ms.insert(1);
   ms.insert(2);
   ms.insert(2);
@@ -104,7 +104,7 @@ TEST(MultisetTest, equal_range) {
 }
 
 TEST(MultisetTest, lower_bound) {
-  s21::multiset<int> ms;
+  lace::multiset<int> ms;
   ms.insert(1);
   ms.insert(2);
   ms.insert(2);
@@ -115,7 +115,7 @@ TEST(MultisetTest, lower_bound) {
 }
 
 TEST(MultisetTest, upper_bound) {
-  s21::multiset<int> ms;
+  lace::multiset<int> ms;
   ms.insert(1);
   ms.insert(2);
   ms.insert(2);
@@ -126,7 +126,7 @@ TEST(MultisetTest, upper_bound) {
 }
 
 TEST(MultisetTest, initializer_list_constructor) {
-  s21::multiset<int> ms = {1, 2, 2, 3};
+  lace::multiset<int> ms = {1, 2, 2, 3};
 
   ASSERT_EQ(ms.count(1), 1);
   ASSERT_EQ(ms.count(2), 2);
@@ -135,8 +135,8 @@ TEST(MultisetTest, initializer_list_constructor) {
 }
 
 TEST(MultisetTest, copy_constructor) {
-  s21::multiset<int> ms1 = {1, 2, 2, 3};
-  s21::multiset<int> ms2(ms1);
+  lace::multiset<int> ms1 = {1, 2, 2, 3};
+  lace::multiset<int> ms2(ms1);
 
   ASSERT_EQ(ms2.count(1), 1);
   ASSERT_EQ(ms2.count(2), 2);
@@ -145,8 +145,8 @@ TEST(MultisetTest, copy_constructor) {
 }
 
 TEST(MultisetTest, move_constructor) {
-  s21::multiset<int> ms1 = {1, 2, 2, 3};
-  s21::multiset<int> ms2(std::move(ms1));
+  lace::multiset<int> ms1 = {1, 2, 2, 3};
+  lace::multiset<int> ms2(std::move(ms1));
 
   ASSERT_EQ(ms2.count(1), 1);
   ASSERT_EQ(ms2.count(2), 2);
@@ -156,8 +156,8 @@ TEST(MultisetTest, move_constructor) {
 }
 
 TEST(MultisetTest, move_assignment_operator) {
-  s21::multiset<int> ms1 = {1, 2, 2, 3};
-  s21::multiset<int> ms2;
+  lace::multiset<int> ms1 = {1, 2, 2, 3};
+  lace::multiset<int> ms2;
   ms2 = std::move(ms1);
 
   ASSERT_EQ(ms2.count(1), 1);
@@ -168,12 +168,12 @@ TEST(MultisetTest, move_assignment_operator) {
 }
 
 TEST(MultisetTest, max_size) {
-  s21::multiset<int> ms;
+  lace::multiset<int> ms;
   ASSERT_GT(ms.max_size(), 0);
 }
 
 TEST(MultisetTest, iterator) {
-  s21::multiset<int> ms = {1, 2, 2, 3};
+  lace::multiset<int> ms = {1, 2, 2, 3};
 
   size_t count = 0;
   for (auto it = ms.begin(); it != ms.end(); ++it) {
@@ -183,7 +183,7 @@ TEST(MultisetTest, iterator) {
 }
 
 TEST(MultisetTest, const_iterator) {
-  const s21::multiset<int> ms = {1, 2, 2, 3};
+  const lace::multiset<int> ms = {1, 2, 2, 3};
 
   size_t count = 0;
   for (auto it = ms.begin(); it != ms.end(); ++it) {
@@ -193,7 +193,7 @@ TEST(MultisetTest, const_iterator) {
 }
 
 TEST(MultisetTest, insert_duplicate) {
-  s21::multiset<int> ms;
+  lace::multiset<int> ms;
   ms.insert(1);
   ms.insert(1);
 
@@ -202,7 +202,7 @@ TEST(MultisetTest, insert_duplicate) {
 }
 
 TEST(MultisetTest, erase_non_existent_element) {
-  s21::multiset<int> ms;
+  lace::multiset<int> ms;
   ms.insert(1);
   ms.insert(2);
 
@@ -211,7 +211,7 @@ TEST(MultisetTest, erase_non_existent_element) {
 }
 
 TEST(MultisetTest, erase_all_elements) {
-  s21::multiset<int> ms;
+  lace::multiset<int> ms;
   ms.insert(1);
   ms.insert(2);
   ms.insert(2);
@@ -225,7 +225,7 @@ TEST(MultisetTest, erase_all_elements) {
 }
 
 TEST(MultisetTest, string_type) {
-  s21::multiset<std::string> ms;
+  lace::multiset<std::string> ms;
   ms.insert("apple");
   ms.insert("banana");
   ms.insert("apple");
@@ -235,7 +235,7 @@ TEST(MultisetTest, string_type) {
 }
 
 TEST(MultisetTest, large_number_of_elements) {
-  s21::multiset<int> ms;
+  lace::multiset<int> ms;
   for (int i = 0; i < 10000; ++i) {
     ms.insert(i);
   }
@@ -247,12 +247,12 @@ TEST(MultisetTest, large_number_of_elements) {
 }
 
 TEST(MultisetTest, merge_identical) {
-  s21::multiset<int> ms1 = {1, 2, 2, 3, 4, 4, 4};
-  s21::multiset<int> ms2 = {1, 2, 2, 3, 4, 4, 4};
+  lace::multiset<int> ms1 = {1, 2, 2, 3, 4, 4, 4};
+  lace::multiset<int> ms2 = {1, 2, 2, 3, 4, 4, 4};
   size_t s = ms1.size() + ms2.size();
   ms1.merge(ms2);
 
-  s21::multiset<int> expected_ms = {1, 1, 2, 2, 2, 2, 3, 3, 4, 4, 4, 4, 4, 4};
+  lace::multiset<int> expected_ms = {1, 1, 2, 2, 2, 2, 3, 3, 4, 4, 4, 4, 4, 4};
 
   ASSERT_EQ(ms1.size(), expected_ms.size());
   ASSERT_EQ(ms1.size(), s);
@@ -260,12 +260,12 @@ TEST(MultisetTest, merge_identical) {
 }
 
 TEST(MultisetTest, merge_non_identical) {
-  s21::multiset<int> ms1 = {1, 2, 3, 4, 5};
-  s21::multiset<int> ms2 = {3, 4, 5, 6, 7, 7};
+  lace::multiset<int> ms1 = {1, 2, 3, 4, 5};
+  lace::multiset<int> ms2 = {3, 4, 5, 6, 7, 7};
   size_t s = ms1.size() + ms2.size();
   ms1.merge(ms2);
 
-  s21::multiset<int> expected_ms = {1, 2, 3, 3, 4, 4, 5, 5, 6, 7, 7};
+  lace::multiset<int> expected_ms = {1, 2, 3, 3, 4, 4, 5, 5, 6, 7, 7};
 
   ASSERT_EQ(ms1.size(), expected_ms.size());
   ASSERT_EQ(ms1.size(), s);
@@ -273,7 +273,7 @@ TEST(MultisetTest, merge_non_identical) {
 }
 
 TEST(MultisetTest, lower_bound_test) {
-  s21::multiset<int> ms = {1, 2, 2, 3, 3, 3, 4, 5, 5};
+  lace::multiset<int> ms = {1, 2, 2, 3, 3, 3, 4, 5, 5};
 
   auto it1 = ms.lower_bound(3);
   ASSERT_EQ(*it1, 3);
@@ -291,7 +291,7 @@ TEST(MultisetTest, lower_bound_test) {
 }
 
 TEST(MultisetTest, upper_bound_test) {
-  s21::multiset<int> ms = {1, 2, 2, 3, 3, 3, 4, 5, 5};
+  lace::multiset<int> ms = {1, 2, 2, 3, 3, 3, 4, 5, 5};
 
   auto it1 = ms.upper_bound(3);
   ASSERT_EQ(*it1, 4);
@@ -310,7 +310,7 @@ TEST(MultisetTest, upper_bound_test) {
 }
 
 TEST(MultisetTest, equal_range_test) {
-  s21::multiset<int> ms = {1, 2, 2, 3, 3, 3, 4, 5, 5};
+  lace::multiset<int> ms = {1, 2, 2, 3, 3, 3, 4, 5, 5};
 
   auto range1 = ms.equal_range(3);
   auto it_begin1 = range1.first;
@@ -342,7 +342,7 @@ TEST(MultisetTest, equal_range_test) {
 }
 
 TEST(MultisetInsertManyTest, insert_multiple_elements) {
-  s21::multiset<int> ms;
+  lace::multiset<int> ms;
   auto results = ms.insert_many(5, 3, 5, 2, 3, 3);
 
   ASSERT_EQ(ms.size(), 6);
@@ -358,7 +358,7 @@ TEST(MultisetInsertManyTest, insert_multiple_elements) {
 }
 
 TEST(MultisetInsertManyTest, insert_empty) {
-  s21::multiset<std::string> ms = {"apple", "banana"};
+  lace::multiset<std::string> ms = {"apple", "banana"};
   auto results = ms.insert_many();
 
   ASSERT_TRUE(results.empty());
@@ -366,7 +366,7 @@ TEST(MultisetInsertManyTest, insert_empty) {
 }
 
 TEST(MultisetInsertManyTest, iterator_validity) {
-  s21::multiset<int> ms = {10, 20};
+  lace::multiset<int> ms = {10, 20};
   auto it_before = ms.begin();
 
   auto results = ms.insert_many(15, 10, 25);
@@ -381,7 +381,7 @@ TEST(MultisetInsertManyTest, iterator_validity) {
 }
 
 TEST(MultisetInsertManyTest, mixed_types_conversion) {
-  s21::multiset<double> ms;
+  lace::multiset<double> ms;
   auto results = ms.insert_many(1, 2.5f, 3u, 4.0);
 
   ASSERT_EQ(ms.size(), 4);
@@ -392,7 +392,7 @@ TEST(MultisetInsertManyTest, mixed_types_conversion) {
 }
 
 TEST(MultisetInsertManyTest, order_preservation) {
-  s21::multiset<int> ms = {1, 3, 5};
+  lace::multiset<int> ms = {1, 3, 5};
   ms.insert_many(2, 4, 6);
 
   std::vector<int> expected = {1, 2, 3, 4, 5, 6};
@@ -407,7 +407,7 @@ TEST(MultisetInsertManyTest, order_preservation) {
 
 TEST(MultisetInsertManyTest, performance_test) {
   const int kCount = 10000;
-  s21::multiset<int> ms;
+  lace::multiset<int> ms;
 
   std::vector<int> values;
   for (int i = 0; i < kCount; ++i) {
@@ -419,7 +419,7 @@ TEST(MultisetInsertManyTest, performance_test) {
 }
 
 TEST(MultisetInsertManyTest, return_value_check) {
-  s21::multiset<int> ms = {1, 2, 2, 3};
+  lace::multiset<int> ms = {1, 2, 2, 3};
   auto results = ms.insert_many(2, 4, 2, 5);
 
   ASSERT_EQ(results.size(), 4);
@@ -440,7 +440,7 @@ TEST(MultisetInsertManyTest, return_value_check) {
 }
 
 TEST(MultisetBoundsTest, lower_bound_test) {
-  s21::multiset<int> ms = {10, 20, 20, 30, 40};
+  lace::multiset<int> ms = {10, 20, 20, 30, 40};
 
   auto lb1 = ms.lower_bound(20);
   ASSERT_NE(lb1, ms.end());
@@ -453,7 +453,7 @@ TEST(MultisetBoundsTest, lower_bound_test) {
 }
 
 TEST(MultisetBoundsTest, upper_bound_test) {
-  s21::multiset<int> ms = {10, 20, 20, 30, 40};
+  lace::multiset<int> ms = {10, 20, 20, 30, 40};
   auto ub1 = ms.upper_bound(20);
   ASSERT_NE(ub1, ms.end());
   ASSERT_EQ(*ub1, 30);
@@ -465,7 +465,7 @@ TEST(MultisetBoundsTest, upper_bound_test) {
 }
 
 TEST(MultisetBoundsTest, equal_range_test) {
-  s21::multiset<int> ms = {10, 20, 20, 30, 40};
+  lace::multiset<int> ms = {10, 20, 20, 30, 40};
   auto range1 = ms.equal_range(20);
   ASSERT_NE(range1.first, ms.end());
   ASSERT_NE(range1.second, ms.end());
@@ -491,7 +491,7 @@ TEST(MultisetBoundsTest, equal_range_test) {
 }
 
 TEST(MultisetBoundsTest, empty_tree_test) {
-  s21::multiset<int> ms;
+  lace::multiset<int> ms;
 
   auto lb = ms.lower_bound(10);
   auto ub = ms.upper_bound(10);
@@ -504,11 +504,108 @@ TEST(MultisetBoundsTest, empty_tree_test) {
 }
 
 TEST(MultisetBoundsTest, single_element_test) {
-  s21::multiset<int> ms = {42};
+  lace::multiset<int> ms = {42};
 
   auto range = ms.equal_range(42);
   ASSERT_NE(range.first, ms.end());
   ASSERT_EQ(range.second, ms.end());
   ASSERT_EQ(*range.first, 42);
   ASSERT_EQ(std::distance(range.first, range.second), 1);
+}
+
+TEST(MultisetTest, IteratorArrowOperator) {
+  struct Person {
+    std::string name;
+    int age;
+
+    bool operator<(const Person& other) const { return age < other.age; }
+    bool operator>(const Person& other) const { return age > other.age; }
+    bool operator==(const Person& other) const { return age == other.age; }
+  };
+
+  lace::multiset<Person> people;
+  people.insert({"Eug", 25});
+  people.insert({"Eug", 25});
+  people.insert({"Dan", 30});
+  people.insert({"Dan", 30});
+
+  auto it = people.begin();
+  EXPECT_EQ(it->name, "Eug");
+  EXPECT_EQ(it->age, 25);
+
+  ++it;
+  EXPECT_EQ(it->name, "Eug");
+  EXPECT_EQ(it->age, 25);
+
+  const lace::multiset<Person> const_people = people;
+  lace::multiset<Person>::const_iterator const_it = const_people.begin();
+  EXPECT_EQ(const_it->name, "Eug");
+  EXPECT_EQ(const_it->age, 25);
+  ++const_it;
+  const_it++;
+  EXPECT_EQ(const_it->name, "Dan");
+  EXPECT_EQ(const_it->age, 30);
+}
+
+TEST(MultisetTest, IteratorDecrement) {
+  lace::multiset<int> ms = {1, 2, 2, 3};
+  auto it = ++ms.begin();
+  --it;
+  ASSERT_EQ(*it, 1);
+  it = ++(++ms.begin());
+  it--;
+  --it;
+  ASSERT_EQ(*it, 1);
+}
+
+TEST(MultisetTest, MergeTest) {
+  lace::multiset<int> ms1 = {};
+  lace::multiset<int> ms2 = {1, 2, 2, 2, 2, 2};
+  ms1.merge(ms2);
+  ASSERT_EQ(ms1.size(), 6);
+  ASSERT_EQ(ms1.count(2), 5);
+  ASSERT_EQ(ms2.size(), 0);
+}
+
+TEST(MultisetTest, MergeSelf) {
+  lace::multiset<int> ms1 = {1, 2, 2, 2, 2, 2};
+  ms1.merge(ms1);
+  ASSERT_EQ(ms1.size(), 6);
+  ASSERT_EQ(ms1.count(2), 5);
+}
+
+TEST(MultisetTest, ConstBounds) {
+  const lace::multiset<int> ms = {1, 2, 2, 3};
+  auto lb = ms.lower_bound(2);
+  auto ub = ms.upper_bound(2);
+  ASSERT_EQ(*lb, 2);
+  ASSERT_EQ(*ub, 3);
+}
+
+TEST(MultisetTest, ConstIteratorDereferenceEndThrows) {
+  const lace::multiset<int> ms = {1, 2};
+  auto it = ms.end();
+  EXPECT_THROW(*it, std::runtime_error);
+  EXPECT_THROW(it.operator->(), std::runtime_error);
+}
+
+TEST(MultisetTest, ConstIteratorIncrementEndThrows) {
+  const lace::multiset<int> ms = {1, 2};
+  auto it = ms.end();
+  EXPECT_THROW(++it, std::runtime_error);
+}
+
+TEST(MultisetTest, IteratorDereferenceEndThrows) {
+  lace::multiset<int> ms = {1, 2};
+  auto it = ms.end();
+
+  EXPECT_THROW(*it, std::runtime_error);
+  EXPECT_THROW(it.operator->(), std::runtime_error);
+}
+
+TEST(MultisetTest, IteratorIncrementEndThrows) {
+  lace::multiset<int> ms = {1, 2};
+  auto it = ms.end();
+
+  EXPECT_THROW(++it, std::runtime_error);
 }

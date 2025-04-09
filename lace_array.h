@@ -1,9 +1,9 @@
-#ifndef _S21_array_H_
-#define _S21_array_H_
+#ifndef array_H_
+#define array_H_
 #include <iostream>
 #include <stdexcept>
 
-namespace s21 {
+namespace lace {
 
 template <typename T, size_t N>
 class array {
@@ -127,5 +127,5 @@ class array {
   alignas(alignof(value_type)) char storage_[sizeof(value_type) * N];
 
 };  // class array
-}  // namespace s21
+}  // namespace lace
 #endif  // array_H_

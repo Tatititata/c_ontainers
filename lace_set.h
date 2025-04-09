@@ -1,9 +1,9 @@
-#ifndef _S21_SET_H_
-#define _S21_SET_H_
+#ifndef _lace_SET_H_
+#define _lace_SET_H_
 
-#include "s21_map.h"
+#include "lace_map.h"
 
-namespace s21 {
+namespace lace {
 
 template <typename Key>
 class set {
@@ -22,7 +22,7 @@ class set {
     iterator(tree_iterator it) : it_(it) {}
 
     value_type operator*() const { return it_->first; }
-    value_type* operator->() const { return &it_->first; }
+    const value_type* operator->() const { return &it_->first; }
 
     iterator& operator++() {
       ++it_;
@@ -159,12 +159,12 @@ class set {
 
     std::vector<std::pair<iterator, bool>> results;
     results.reserve(sizeof...(Args));
-    (results.emplace_back(insert(std::forward<Args>(args))), ...);
+    (results.push_back(insert(std::forward<Args>(args))), ...);
 
     return results;
   }
 };
 
-}  // namespace s21
+}  // namespace lace
 
-#endif  // _S21_SET_H_
+#endif  // _lace_SET_H_

@@ -1,9 +1,9 @@
 #include <gtest/gtest.h>
 
-#include "../s21_queue.h"
+#include "../lace_queue.h"
 
 TEST(queue_test, default_constructor) {
-  s21::s21_queue<int> que;
+  lace::queue<int> que;
   EXPECT_EQ(que.size(), 0);
   EXPECT_EQ(que.empty(), true);
 }
@@ -20,7 +20,7 @@ int Test_count_obj::count = 0;
 
 TEST(queue_test, default_destructor) {
   {
-    s21::s21_queue<Test_count_obj> que;
+    lace::queue<Test_count_obj> que;
     que.push(Test_count_obj());
     que.push(Test_count_obj());
     EXPECT_GT(Test_count_obj::count, 0);
@@ -29,15 +29,15 @@ TEST(queue_test, default_destructor) {
 }
 
 TEST(queue_test, initializer_list_constructor) {
-  s21::s21_queue<int> q{1, 2, 3, 4};
+  lace::queue<int> q{1, 2, 3, 4};
   EXPECT_EQ(q.size(), 4);
   EXPECT_EQ(q.front(), 1);
   EXPECT_EQ(q.back(), 4);
 }
 
 TEST(queue_test, copy_constructor) {
-  s21::s21_queue<int> orig{5, 6, 7};
-  s21::s21_queue<int> copy(orig);
+  lace::queue<int> orig{5, 6, 7};
+  lace::queue<int> copy(orig);
 
   EXPECT_EQ(orig.size(), copy.size());
   EXPECT_EQ(orig.front(), copy.front());
@@ -45,8 +45,8 @@ TEST(queue_test, copy_constructor) {
 }
 
 TEST(queue_test, move_constructor) {
-  s21::s21_queue<int> orig{10, 20, 30};
-  s21::s21_queue<int> moved(std::move(orig));
+  lace::queue<int> orig{10, 20, 30};
+  lace::queue<int> moved(std::move(orig));
 
   EXPECT_TRUE(orig.empty());
   EXPECT_EQ(moved.size(), 3);
@@ -55,8 +55,8 @@ TEST(queue_test, move_constructor) {
 }
 
 TEST(queue_test, move_assignment_operator) {
-  s21::s21_queue<int> orig{100, 200};
-  s21::s21_queue<int> target;
+  lace::queue<int> orig{100, 200};
+  lace::queue<int> target;
   target = std::move(orig);
 
   EXPECT_TRUE(orig.empty());
@@ -66,7 +66,7 @@ TEST(queue_test, move_assignment_operator) {
 }
 
 TEST(queue_test, push_pop) {
-  s21::s21_queue<std::string> que;
+  lace::queue<std::string> que;
   que.push("first");
   que.push("second");
 
@@ -79,7 +79,7 @@ TEST(queue_test, push_pop) {
 }
 
 TEST(queue_test, front_back) {
-  s21::s21_queue<char> que{'a', 'b', 'c'};
+  lace::queue<char> que{'a', 'b', 'c'};
   EXPECT_EQ(que.front(), 'a');
   EXPECT_EQ(que.back(), 'c');
 
@@ -90,7 +90,7 @@ TEST(queue_test, front_back) {
 }
 
 TEST(queue_test, large_data) {
-  s21::s21_queue<int> que;
+  lace::queue<int> que;
   for (int i = 0; i < 10000; ++i) {
     que.push(i);
   }
@@ -107,8 +107,8 @@ TEST(queue_test, large_data) {
 }
 
 TEST(QueueTest, Swap) {
-  s21::s21_queue<int> q1{1, 2, 3};
-  s21::s21_queue<int> q2{4, 5};
+  lace::queue<int> q1{1, 2, 3};
+  lace::queue<int> q2{4, 5};
 
   q1.swap(q2);
 
@@ -116,4 +116,55 @@ TEST(QueueTest, Swap) {
   EXPECT_EQ(q1.front(), 4);
   EXPECT_EQ(q2.size(), 3);
   EXPECT_EQ(q2.front(), 1);
+}
+
+TEST(QueueTest, FronBackSimple) {
+  lace::queue<int> q;
+  q.push(1);
+  q.push(2);
+  q.push(3);
+
+  ASSERT_EQ(q.front(), 1);
+  ASSERT_EQ(q.back(), 3);
+}
+
+TEST(QueueTest, FronBackOneSize) {
+  lace::queue<int> q;
+  q.push(1);
+
+  ASSERT_EQ(q.front(), 1);
+  ASSERT_EQ(q.back(), 1);
+}
+
+TEST(QueueTest, FronBackAfterPop) {
+  lace::queue<int> q;
+  q.push(1);
+  q.push(2);
+  q.push(3);
+  q.push(4);
+
+  q.pop();
+  q.pop();
+
+  ASSERT_EQ(q.front(), 3);
+  ASSERT_EQ(q.back(), 4);
+}
+
+TEST(QueueTest, ConstFronBackSimple) {
+  const lace::queue<int> q{1, 2, 3, 4};
+
+  ASSERT_EQ(q.front(), 1);
+  ASSERT_EQ(q.back(), 4);
+}
+
+TEST(QueueTest, ConstFronBackOneSize) {
+  const lace::queue<int> q{1};
+
+  ASSERT_EQ(q.front(), 1);
+  ASSERT_EQ(q.back(), 1);
+}
+
+TEST(QueueTest, AssignConstructor) {
+  lace::queue<int> q1{1, 2, 3, 4};
+  ASSERT_NO_THROW(lace::queue<int> q2(q1));
 }

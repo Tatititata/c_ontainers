@@ -1,9 +1,9 @@
 #include <gtest/gtest.h>
 
-#include "../s21_map.h"
+#include "../lace_map.h"
 
 TEST(RBTreeIteratorTest, increment_operator) {
-  s21::map<int, std::string> tree;
+  lace::map<int, std::string> tree;
   tree.insert(1, "one");
   tree.insert(2, "two");
   tree.insert(3, "three");
@@ -18,7 +18,7 @@ TEST(RBTreeIteratorTest, increment_operator) {
 }
 
 TEST(RBTreeIteratorTest, decrement_operator) {
-  s21::map<int, std::string> tree;
+  lace::map<int, std::string> tree;
   tree.insert(1, "one");
   tree.insert(2, "two");
   tree.insert(3, "three");
@@ -33,7 +33,7 @@ TEST(RBTreeIteratorTest, decrement_operator) {
 }
 
 TEST(RBTreeIteratorTest, dereference_operator) {
-  s21::map<int, std::string> tree;
+  lace::map<int, std::string> tree;
   tree.insert(1, "one");
   tree.insert(2, "two");
   auto it = tree.begin();
@@ -49,7 +49,7 @@ TEST(RBTreeIteratorTest, dereference_operator) {
 }
 
 TEST(RBTreeIteratorTest, comparison_operators) {
-  s21::map<int, std::string> tree;
+  lace::map<int, std::string> tree;
   tree.insert(1, "one");
   tree.insert(2, "two");
   auto it1 = tree.begin();
@@ -62,7 +62,7 @@ TEST(RBTreeIteratorTest, comparison_operators) {
 }
 
 TEST(RBTreeConstIteratorTest, increment_operator) {
-  s21::map<int, std::string> tree;
+  lace::map<int, std::string> tree;
   tree.insert(1, "one");
   tree.insert(2, "two");
   tree.insert(3, "three");
@@ -78,7 +78,7 @@ TEST(RBTreeConstIteratorTest, increment_operator) {
 }
 
 TEST(RBTreeConstIteratorTest, decrement_operator) {
-  s21::map<int, std::string> tree;
+  lace::map<int, std::string> tree;
   tree.insert(1, "one");
   tree.insert(2, "two");
   tree.insert(3, "three");
@@ -94,7 +94,7 @@ TEST(RBTreeConstIteratorTest, decrement_operator) {
 }
 
 TEST(RBTreeConstIteratorTest, dereference_operator) {
-  s21::map<int, std::string> tree;
+  lace::map<int, std::string> tree;
   tree.insert(1, "one");
   tree.insert(2, "two");
   const auto& const_tree = tree;
@@ -111,7 +111,7 @@ TEST(RBTreeConstIteratorTest, dereference_operator) {
 }
 
 TEST(RBTreeConstIteratorTest, comparison_operators) {
-  s21::map<int, std::string> tree;
+  lace::map<int, std::string> tree;
   tree.insert(1, "one");
   tree.insert(2, "two");
   const auto& const_tree = tree;
@@ -125,7 +125,7 @@ TEST(RBTreeConstIteratorTest, comparison_operators) {
 }
 
 TEST(RBTreeIteratorTest, partial_reverse_1) {
-  s21::map<int, std::string> tree;
+  lace::map<int, std::string> tree;
   tree.insert(1, "one");
   tree.insert(2, "two");
   tree.insert(3, "three");
@@ -144,7 +144,7 @@ TEST(RBTreeIteratorTest, partial_reverse_1) {
 }
 
 TEST(RBTreeIteratorTest, partial_reverse_traversal_2) {
-  s21::map<int, std::string> tree;
+  lace::map<int, std::string> tree;
   tree.insert(1, "one");
   tree.insert(2, "two");
   tree.insert(3, "three");
@@ -166,7 +166,7 @@ TEST(RBTreeIteratorTest, partial_reverse_traversal_2) {
 }
 
 TEST(RBTreeIteratorTest, partial_reverse_3) {
-  s21::map<int, std::string> tree;
+  lace::map<int, std::string> tree;
   tree.insert(1, "one");
   tree.insert(2, "two");
   tree.insert(3, "three");
@@ -191,7 +191,7 @@ TEST(RBTreeIteratorTest, partial_reverse_3) {
 }
 
 TEST(RBTreeIteratorTest, partial_reverse_4) {
-  s21::map<int, std::string> tree;
+  lace::map<int, std::string> tree;
   tree.insert(1, "one");
   tree.insert(2, "two");
   tree.insert(3, "three");
@@ -222,7 +222,7 @@ TEST(RBTreeIteratorTest, partial_reverse_4) {
 }
 
 TEST(RBTreeIteratorTest, erase_first_element) {
-  s21::map<int, std::string> tree;
+  lace::map<int, std::string> tree;
   tree.insert(1, "one");
   tree.insert(2, "two");
 
@@ -234,7 +234,7 @@ TEST(RBTreeIteratorTest, erase_first_element) {
 }
 
 TEST(RBTreeIteratorTest, erase_last_element) {
-  s21::map<int, std::string> tree;
+  lace::map<int, std::string> tree;
   tree.insert({1, "one"});
   tree.insert({2, "two"});
 
@@ -247,7 +247,7 @@ TEST(RBTreeIteratorTest, erase_last_element) {
 }
 
 TEST(RBTreeIteratorTest, erase_by_iterator) {
-  s21::map<int, std::string> tree;
+  lace::map<int, std::string> tree;
 
   tree.insert({1, "one"});
   tree.insert({2, "two"});
@@ -291,8 +291,8 @@ TEST(RBTreeIteratorTest, erase_by_iterator) {
 }
 
 TEST(RBTreeIteratorTest, iterator_and_swap) {
-  s21::map<int, int> first;
-  s21::map<int, int> second;
+  lace::map<int, int> first;
+  lace::map<int, int> second;
 
   first.insert(1, 2);
   first.insert(3, 4);
@@ -312,8 +312,8 @@ TEST(RBTreeIteratorTest, iterator_and_swap) {
 }
 
 TEST(RBTreeIteratorTest, iterator_and_swap_denis) {
-  s21::map<int, int> first;
-  s21::map<int, int> second;
+  lace::map<int, int> first;
+  lace::map<int, int> second;
 
   first.insert(1, 1);
   auto it = first.begin();

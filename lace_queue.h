@@ -1,12 +1,16 @@
-#ifndef _S21_QUEUE_H_
-#define _S21_QUEUE_H_
+#ifndef _lace_QUEUE_H_
+#define _lace_QUEUE_H_
+#include <iostream>
+#include <list>
+#include <stdexcept>
 
-#include "s21_list.h"
+// #include "lace_list.h"
 
-namespace s21 {
-template <class T, class Container = s21::list<T>>
+namespace lace {
 
-class s21_queue {
+template <class T, class Container = std::list<T>>
+
+class queue {
   Container container_;
 
  public:
@@ -15,15 +19,13 @@ class s21_queue {
   using const_reference = const T&;
   using size_type = size_t;
 
-  s21_queue() = default;
+  queue() = default;
 
-  s21_queue(const s21_queue& other) : container_(other.container_) {}
+  queue(const queue& other) : container_(other.container_) {}
 
-  s21_queue(std::initializer_list<value_type> const& items)
-      : container_(items) {}
+  queue(std::initializer_list<value_type> const& items) : container_(items) {}
 
-  s21_queue(s21_queue&& other) noexcept
-      : container_(std::move(other.container_)) {}
+  queue(queue&& other) noexcept : container_(std::move(other.container_)) {}
 
   void push(const_reference tail) { container_.push_back(tail); }
 
@@ -32,9 +34,9 @@ class s21_queue {
   size_type size() const { return container_.size(); }
   bool empty() const { return container_.empty(); }
 
-  ~s21_queue() = default;
+  ~queue() = default;
 
-  s21_queue& operator=(s21_queue&& other) noexcept {
+  queue& operator=(queue&& other) noexcept {
     if (this != &other) {
       container_ = std::move(other.container_);
     }
@@ -46,8 +48,8 @@ class s21_queue {
   reference back() { return container_.back(); }
   const_reference back() const { return container_.back(); }
 
-  void swap(s21_queue& other) noexcept { container_.swap(other.container_); }
+  void swap(queue& other) noexcept { container_.swap(other.container_); }
 
-};  // s21_queue
-}  // namespace s21
-#endif  // S21_QUEUE_H_
+};  // queue
+}  // namespace lace
+#endif  // queue_H_

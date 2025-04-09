@@ -49,9 +49,7 @@ gcov_report: clean test
 	$(MAKE) clean_without_coverage
 
 clang-format:
-	cp ../materials/linters/.clang-format .	
 	clang-format -i $(wildcard *.cc) $(wildcard *.h) $(wildcard */*.cc) $(wildcard */*.h)
-	$(RM) .clang-format
 
 clean: clean_without_coverage
 	$(RM) report

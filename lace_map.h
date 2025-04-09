@@ -1,10 +1,14 @@
-#ifndef _S21_MAP_H_
-#define _S21_MAP_H_
+#ifndef _LACE_MAP_H_
+#define _LACE_MAP_H_
 
 #include <limits>
+#include <queue>
 #include <vector>
 
-namespace s21 {
+// #include "lace_vector.h"
+#include "lace_queue.h"
+
+namespace lace {
 
 template <typename Key, typename T>
 class map {
@@ -204,90 +208,7 @@ class map {
       return !(*this == other);
     }
     const Node* get_current() const { return current_ ? current_ : nullptr; }
-  /////////////////////////////////////////////////////////////////////////////
-  void draw() {
-    if (!root_) return;
-    int max_key_length = 0;
-    std::vector<std::vector<Node*>> matrix;
-    std::queue<std::tuple<Node*, size_t, size_t>> q;
-    q.emplace(root_, 0, 0);
 
-    while (!q.empty()) {
-      auto [node, level, pos] = q.front();
-      q.pop();
-      if (level >= matrix.size()) matrix.resize(level + 1);
-      if (pos >= matrix[level].size()) matrix[level].resize(pos + 1, nullptr);
-      matrix[level][pos] = node;
-      if (node) {
-        max_key_length =  std::max(max_key_length, static_cast<int>(std::to_string(node->kv.first).length()));
-        q.emplace(node->left, level + 1, 2 * pos);
-        q.emplace(node->right, level + 1, 2 * pos + 1);
-      }
-    }
-  //   if (!matrix.empty() && std::all_of(matrix.back().begin(), matrix.back().end(), [](Node* node) { return node == nullptr; })) {
-  //     matrix.pop_back();
-  // }
-    std::vector<std::string> rows;
-    for (auto it = matrix.rbegin(); it != matrix.rend(); ++it) {
-      std::string row;
-      std::string slash;
-      std::string line;
-      bool even = true;
-      for (auto inner_it = it->begin(); inner_it != it->end(); ++inner_it) {
-        auto [r, s, l] = center_number(*inner_it, max_key_length, even);
-        row += r;
-        slash += s;
-        line += l;
-        even = !even;
-      }
-      row += '\n';
-      slash += '\n';
-      line += '\n';
-      rows.push_back(row);
-      rows.push_back(slash);
-      rows.push_back(line);
-      max_key_length *= 2;
-    }
-    rows.pop_back();
-    rows.pop_back();
-    std::reverse(rows.begin(), rows.end());
-
-    for (auto row : rows) std::cout << row;
-  }
-
-  std::tuple<std::string, std::string, std::string> center_number(Node* node, int width, bool even) {
-    std::string num_str;
-    std::string slash;
-    std::string line;
-    if (node) {
-      num_str = std::to_string(node->kv.first);
-      int padding = width - num_str.size();
-      int left_pad = padding / 2;
-      int right_pad = padding - left_pad;
-      if (node->color == Color::BLACK)
-        num_str = "\033[1;30m" + num_str + "\033[0m";
-      else
-        num_str = "\033[1;31m" + num_str + "\033[0m";
-
-      num_str =
-          std::string(left_pad, ' ') + num_str + std::string(right_pad, ' ');
-
-      padding = width / 2;
-      if (even) {
-        slash = std::string(padding, ' ') + "/" + std::string(padding - 1, ' ');
-        line = std::string(padding + 1, ' ') + std::string(padding - 1, '-');
-      } else {
-        slash =
-            std::string(padding - 1, ' ') + "\\" + std::string(padding, ' ');
-        line = std::string(padding - 1, '-') + std::string(padding + 1, ' ');
-      }
-    
-    } else {
-      num_str = slash = line = std::string(width, ' ');
-    }
-  
-    return {num_str, slash, line};
-  }
    private:
     const Node* current_;
     const Node* tail_;
@@ -388,15 +309,22 @@ class map {
     return pos;
   }
 
+  iterator erase(iterator&& pos) { return erase(pos); }
+
   void clear() {
     if (root_ == nullptr) return;
-
-    iterator it = begin();
-    while (it != end()) {
-      Node* node = it.get_current();
-      it++;
-      extract_node(node);
-      delete node;
+    std::queue<Node*> nodes_to_delete;
+    nodes_to_delete.push(root_);
+    while (!nodes_to_delete.empty()) {
+      Node* current = nodes_to_delete.front();
+      nodes_to_delete.pop();
+      if (current->left != nullptr) {
+        nodes_to_delete.push(current->left);
+      }
+      if (current->right != nullptr) {
+        nodes_to_delete.push(current->right);
+      }
+      delete current;
     }
     root_ = nullptr;
     head_ = nullptr;
@@ -438,13 +366,22 @@ class map {
       this->swap(other);
     else {
       map temp_tree;
-      auto it = other.begin();
-      while (it != other.end()) {
-        Node* node = it.get_current();
-        it++;
-        extract_node(node);
-        if (!insert_other_node(node)) {
-          temp_tree.insert_other_node(node);
+      lace::queue<Node*> other_nodes;
+      other_nodes.push(other.root_);
+      while (!other_nodes.empty()) {
+        Node* current = other_nodes.front();
+        other_nodes.pop();
+        if (current->left != nullptr) {
+          other_nodes.push(current->left);
+          current->left->parent = nullptr;
+        }
+        if (current->right != nullptr) {
+          other_nodes.push(current->right);
+          current->right->parent = nullptr;
+        }
+        detach_node(current);
+        if (!insert_other_node(current)) {
+          temp_tree.insert_other_node(current);
         }
       }
       other.size_ = 0;
@@ -512,7 +449,7 @@ class map {
   iterator find(const Key& key) {
     Node* node = find_node(key);
     if (node != nullptr) {
-      return iterator(node);
+      return iterator(node, tail_);
     }
     return end();
   }
@@ -520,7 +457,7 @@ class map {
   const_iterator find(const Key& key) const {
     const Node* node = find_node(key);
     if (node != nullptr) {
-      return const_iterator(node);
+      return const_iterator(node, tail_);
     }
     return end();
   }
@@ -533,7 +470,7 @@ class map {
 
     std::vector<std::pair<iterator, bool>> results;
     results.reserve(sizeof...(Args));
-    (results.emplace_back(insert(std::forward<Args>(args))), ...);
+    (results.push_back(insert(std::forward<Args>(args))), ...);
     return results;
   }
 
@@ -544,6 +481,40 @@ class map {
     }
     int black_count = -1;
     return check_rb_properties(root_, 0, black_count);
+  }
+
+  std::pair<const_iterator, const_iterator> equal_range(const Key& key) const {
+    const_iterator lower = lower_bound(key);
+    const_iterator upper = lower;
+    if (upper != end() && upper->first == key) {
+      ++upper;
+    }
+    return std::make_pair(lower, upper);
+  }
+
+  const_iterator lower_bound(const Key& key) const {
+    Node* current = root_;
+    Node* result = nullptr;
+
+    while (current != nullptr) {
+      if (key < current->kv.first) {
+        result = current;
+        current = current->left;
+      } else if (current->kv.first < key) {
+        current = current->right;
+      } else {
+        return const_iterator(current);
+      }
+    }
+    return result ? const_iterator(result) : end();
+  }
+
+  const_iterator upper_bound(const Key& key) const {
+    const_iterator lower = lower_bound(key);
+    if (lower != end() && lower->first == key) {
+      ++lower;
+    }
+    return lower;
   }
 
   std::pair<iterator, iterator> equal_range(const Key& key) {
@@ -579,32 +550,96 @@ class map {
     }
     return lower;
   }
+  void draw() {
+    if (!root_) return;
+    int max_key_length = 0;
+    std::vector<std::vector<Node*>> matrix;
+    lace::queue<std::tuple<Node*, size_t, size_t>> q;
+    q.emplace(root_, 0, 0);
 
-  //////////////////////////////////////////////////////////////////////////////////////////
-  // void print() { print_tree(root_); }
+    while (!q.empty()) {
+      auto [node, level, pos] = q.front();
+      q.pop();
+      if (level >= matrix.size()) matrix.resize(level + 1);
+      if (pos >= matrix[level].size()) matrix[level].resize(pos + 1, nullptr);
+      matrix[level][pos] = node;
+      if (node) {
+        max_key_length =
+            std::max(max_key_length,
+                     static_cast<int>(std::to_string(node->kv.first).length()));
+        q.emplace(node->left, level + 1, 2 * pos);
+        q.emplace(node->right, level + 1, 2 * pos + 1);
+      }
+    }
+    //   if (!matrix.empty() && std::all_of(matrix.back().begin(),
+    //   matrix.back().end(), [](Node* node) { return node == nullptr; })) {
+    //     matrix.pop_back();
+    // }
+    std::vector<std::string> rows;
+    for (auto it = matrix.rbegin(); it != matrix.rend(); ++it) {
+      std::string row;
+      std::string slash;
+      std::string line;
+      bool even = true;
+      for (auto inner_it = it->begin(); inner_it != it->end(); ++inner_it) {
+        auto [r, s, l] = center_number(*inner_it, max_key_length, even);
+        row += r;
+        slash += s;
+        line += l;
+        even = !even;
+      }
+      row += '\n';
+      slash += '\n';
+      line += '\n';
+      rows.push_back(row);
+      rows.push_back(slash);
+      rows.push_back(line);
+      max_key_length *= 2;
+    }
+    rows.pop_back();
+    rows.pop_back();
+    std::reverse(rows.begin(), rows.end());
 
-  // void print_tree(Node* node, int depth = 0) {
-  //   if (node != nullptr) {
-  //     print_tree(node->right, depth + 1);
-  //     for (int i = 0; i < depth; ++i) {
-  //       std::cout << "  ";
-  //     }
-  //     if (node->color == Color::RED) {
-  //       std::cout << "\033[1;31m";
-  //     } else {
-  //       std::cout << "\033[1;37m";
-  //     }
-  //     std::cout << node->kv.first << "("
-  //               << (node->color == Color::RED ? "R" : "B") << ")"
-  //               << "\033[0m";
-  //     std::cout << std::endl;
-  //     print_tree(node->left, depth + 1);
-  //   }
-  // }
-
-  //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    for (auto row : rows) std::cout << row;
+  }
 
  private:
+  std::tuple<std::string, std::string, std::string> center_number(Node* node,
+                                                                  int width,
+                                                                  bool even) {
+    std::string num_str;
+    std::string slash;
+    std::string line;
+    if (node) {
+      num_str = std::to_string(node->kv.first);
+      int padding = width - num_str.size();
+      int left_pad = padding / 2;
+      int right_pad = padding - left_pad;
+      if (node->color == Color::BLACK)
+        num_str = "\033[1;30m" + num_str + "\033[0m";
+      else
+        num_str = "\033[1;31m" + num_str + "\033[0m";
+
+      num_str =
+          std::string(left_pad, ' ') + num_str + std::string(right_pad, ' ');
+
+      padding = width / 2;
+      if (even) {
+        slash = std::string(padding, ' ') + "/" + std::string(padding - 1, ' ');
+        line = std::string(padding + 1, ' ') + std::string(padding - 1, '-');
+      } else {
+        slash =
+            std::string(padding - 1, ' ') + "\\" + std::string(padding, ' ');
+        line = std::string(padding - 1, '-') + std::string(padding + 1, ' ');
+      }
+
+    } else {
+      num_str = slash = line = std::string(width, ' ');
+    }
+
+    return {num_str, slash, line};
+  }
+
   bool check_rb_properties(Node* node, int current_black,
                            int& path_black_count) const {
     if (node == nullptr) {
@@ -621,15 +656,6 @@ class map {
     int new_black = current_black + (node->color == Color::BLACK ? 1 : 0);
     return check_rb_properties(node->left, new_black, path_black_count) &&
            check_rb_properties(node->right, new_black, path_black_count);
-  }
-
-  Node* extract_node(Node* node) {
-    if (node->right != nullptr) {
-      if (node->parent != nullptr) node->parent->left = node->right;
-      node->right->parent = node->parent;
-    }
-    detach_node(node);
-    return node;
   }
 
   void detach_node(Node* node) {
@@ -1006,5 +1032,5 @@ class map {
   }
 
 };  // map
-}  // namespace s21
-#endif  // _S21_MAP_H_
+}  // namespace lace
+#endif  // _lace_MAP_H_

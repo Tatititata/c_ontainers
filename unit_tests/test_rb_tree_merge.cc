@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
 
-#include "../s21_map.h"
+#include "../lace_map.h"
 
-using namespace s21;
+using namespace lace;
 TEST(RBTreeMergeTests, merge_empty_with_empty) {
   map<int, std::string> tree1;
   map<int, std::string> tree2;

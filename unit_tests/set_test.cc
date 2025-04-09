@@ -1,15 +1,16 @@
 #include <gtest/gtest.h>
 
+#include <random>
 #include <set>
 #include <utility>
 
-#include "../s21_set.h"
+#include "../lace_set.h"
 
-// заменить на s21::set
-using SetInts = s21::set<int>;
-using SetStrings = s21::set<std::string>;
+// заменить на lace::set
+using SetInts = lace::set<int>;
+using SetStrings = lace::set<std::string>;
 
-// не менять на s21::set
+// не менять на lace::set
 using OriginalSetInts = std::set<int>;
 
 bool checkSetsEqual(SetInts our_set, OriginalSetInts orig_set) {
@@ -304,7 +305,7 @@ TEST(SetMergeTest, IteratorOnOverlapping) {
   ASSERT_NO_THROW(IterateThrough(second));
 }
 
-// /* РАСКОММЕНТИРОВАТЬ ПОСЛЕ ПОДСТАНОВКИ s21::set в SetInts */
+// /* РАСКОММЕНТИРОВАТЬ ПОСЛЕ ПОДСТАНОВКИ lace::set в SetInts */
 
 TEST(SetLookupTest, NonEmpty) {
   SetStrings first = {"a", "b"};
@@ -364,8 +365,8 @@ TEST(SetGeneralTest, InsertManyReturnCheck) {
 
 TEST(SetIteratorTest, ConstAndNormalIterator) {
   SetInts set = {1};
-  s21::set<int>::const_iterator i = set.begin();
-  s21::set<int>::iterator ci = set.begin();
+  lace::set<int>::const_iterator i = set.begin();
+  lace::set<int>::iterator ci = set.begin();
   ASSERT_EQ(i, ci);
 }
 
@@ -379,42 +380,239 @@ TEST(SetIteratorTest, ConstIterator) {
   ASSERT_EQ(set.end(), iterator);
 }
 
-// TEST(StdSetTest, SwapMassiveSets) {
-//   std::set<int> set1;
-//   std::set<int> set2;
+TEST(SetEraseBalanceTest, EraseByIteratorRandom) {
+  SetInts set;
+  const int N = 10000;
+  std::vector<int> values(N);
+  std::iota(values.begin(), values.end(), 0);
 
-//   const int SIZE = 2'000'000;
+  std::random_device rd;
+  std::mt19937 g(rd());
+  std::shuffle(values.begin(), values.end(), g);
 
-//   for (int i = 1; i <= SIZE; ++i) {
-//     set1.insert(i);
-//   }
-//   for (int i = SIZE + 1; i <= 2 * SIZE; ++i) {
-//     set2.insert(i);
-//   }
-//   // Выводим время
-//   std::cout << "std::set swap time: "
-//             << "\n";
-//   auto start = std::chrono::high_resolution_clock::now();
+  for (int v : values) {
+    set.insert(v);
+  }
 
-//   set1.swap(set2);
+  for (int v : values) {
+    auto it = set.find(v);
+    if (it != set.end()) {
+      set.erase(it);
+    }
+  }
 
-//   auto end = std::chrono::high_resolution_clock::now();
+  ASSERT_EQ(set.size(), 0);
+  ASSERT_EQ(set.begin(), set.end());
+}
 
-//   // Выводим время
-//   std::cout << "std::set swap time: "
-//             << std::chrono::duration_cast<std::chrono::milliseconds>(end -
-//                                                                      start)
-//                    .count()
-//             << " ms\n";
+TEST(SetEraseBalanceTest, EraseUntilEmpty) {
+  SetInts set;
+  const int N = 50000;
+  for (int i = 0; i < N; ++i) {
+    set.insert(i);
+  }
 
-//   for (int i = SIZE + 1; i <= 2 * SIZE; i += SIZE / 100) {
-//     EXPECT_NE(set1.find(i), set1.end());  // Аналог contains()
-//   }
+  while (!set.empty()) {
+    set.erase(set.begin());
+  }
 
-//   for (int i = 1; i <= SIZE; i += SIZE / 100) {
-//     EXPECT_NE(set2.find(i), set2.end());
-//   }
+  ASSERT_EQ(set.size(), 0);
+  ASSERT_EQ(set.begin(), set.end());
+}
 
-//   EXPECT_EQ(set1.find(1), set1.end());
-//   EXPECT_EQ(set2.find(SIZE + 1), set2.end());
-// }
+TEST(SetIteratorTest, IteratorOperatorArrow) {
+  struct A {
+    A(int a, int b) : a_(a), b_(b) {}
+
+    bool operator<(const A& other) { return a_ < other.a_; }
+    bool operator==(const A& other) { return a_ == other.a_; }
+
+    int a_{};
+    int b_{};
+  };
+
+  lace::set<A*> set;
+
+  A a(1, 1);
+  A b(2, 2);
+  set.insert(&a);
+  set.insert(&b);
+
+  auto it = set.begin();
+
+  ASSERT_EQ((*it)->a_, 1);
+}
+
+TEST(SetIteratorTest, ChainIteratorBackAndForth) {
+  SetInts set;
+  set.insert(2);
+  set.insert(3);
+  set.insert(1);
+  set.insert(4);
+
+  auto it = set.begin();
+
+  ++it;
+  ++it;
+  ++it;
+  ASSERT_EQ(*it, 4);
+  ++it;
+  ASSERT_EQ(it, set.end());
+
+  it--;
+  it++;
+  ASSERT_EQ(it, set.end());
+
+  --it;
+  ++it;
+  ASSERT_EQ(it, set.end());
+  ASSERT_TRUE(it != set.begin());
+  ASSERT_TRUE(it == set.end());
+
+  it--;
+  ASSERT_EQ(*it, 4);
+  --it;
+  --it;
+  --it;
+  ASSERT_EQ(*it, 1);
+}
+
+TEST(SetIteratorTest, ChainIteratorBackAndForthConst) {
+  auto f = [](const SetInts& set) {
+    auto it = set.begin();
+    ASSERT_EQ(it, set.find(1));
+
+    ++it;
+    ++it;
+    ++it;
+    ASSERT_EQ(*it, 4);
+    ++it;
+    ASSERT_EQ(it, set.end());
+
+    it--;
+    it++;
+    ASSERT_EQ(it, set.end());
+
+    --it;
+    ++it;
+    ASSERT_EQ(it, set.end());
+    ASSERT_TRUE(it != set.begin());
+    ASSERT_TRUE(it == set.end());
+
+    it--;
+    ASSERT_EQ(*it, 4);
+    --it;
+    --it;
+    --it;
+    ASSERT_EQ(*it, 1);
+
+    ASSERT_TRUE(set.begin() == set.cbegin());
+    ASSERT_TRUE(set.end() == set.cend());
+  };
+
+  SetInts set;
+  set.insert(2);
+  set.insert(3);
+  set.insert(1);
+  set.insert(4);
+
+  f(set);
+}
+
+TEST(SetMaxSize, MaxSizeFunctionExists) {
+  SetInts set;
+  ASSERT_NO_THROW(set.max_size());
+}
+
+TEST(SetEraseTest, EraseFirst) {
+  SetInts set;
+  set.insert(30);
+  set.insert(40);
+  set.insert(10);
+  set.insert(20);
+
+  set.erase(10);
+
+  ASSERT_EQ(*set.begin(), 20);
+}
+
+TEST(SetEraseTest, EraseMiddle) {
+  SetInts set;
+  set.insert(10);
+  set.insert(20);
+  set.insert(30);
+
+  set.erase(20);
+
+  auto it = set.begin();
+  ASSERT_EQ(*it, 10);
+  ++it;
+  ASSERT_EQ(*it, 30);
+}
+
+TEST(SetEraseTest, EraseLast) {
+  SetInts set;
+  set.insert(10);
+  set.insert(20);
+  set.insert(30);
+
+  set.erase(30);
+
+  auto it = set.begin();
+  ASSERT_EQ(*it, 10);
+  ++it;
+  ASSERT_EQ(*it, 20);
+}
+
+TEST(SetIteratorTest, SetArrowOperator) {
+  struct Person {
+    std::string name;
+    int age;
+    bool operator<(const Person& other) const { return age < other.age; }
+    bool operator>(const Person& other) const { return age > other.age; }
+    bool operator==(const Person& other) const { return age == other.age; }
+  };
+
+  lace::set<Person> people;
+  people.insert({"Eug", 25});
+  people.insert({"Dan", 30});
+
+  auto it = people.begin();
+  auto cit = people.cbegin();
+
+  ASSERT_EQ(it->name, "Eug");
+  ASSERT_EQ(it->age, 25);
+  ASSERT_EQ(cit->age, 25);
+
+  ++it;
+  ++cit;
+
+  ASSERT_EQ(it->name, "Dan");
+  ASSERT_EQ(it->age, 30);
+  ASSERT_EQ(cit->age, 30);
+}
+
+TEST(SetIteratorTest, ConstIteratorBase) {
+  SetInts set = {1, 2};
+  auto iterator = set.cbegin();
+  ASSERT_EQ(1, iterator.base()->first);
+  iterator++;
+  ASSERT_EQ(2, iterator.base()->first);
+}
+
+TEST(SetOperatorTest, CopyOperatorTest) {
+  SetInts a = {1, 2};
+  SetInts b;
+  b = a;
+  ASSERT_EQ(*a.begin(), *b.begin());
+  ASSERT_EQ(a.size(), b.size());
+}
+
+TEST(SetOperatorTest, MoveOperatorTest) {
+  SetInts a = {1, 2};
+  SetInts b;
+  b = std::move(a);
+  ASSERT_EQ(*b.begin(), 1);
+  ASSERT_EQ(b.size(), 2);
+  ASSERT_TRUE(a.empty());
+}
