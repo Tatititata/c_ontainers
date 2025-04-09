@@ -82,24 +82,9 @@ int main() {
 ```
 ### 🖥️ Output
 
-```
-        5        
-     ------     
-    /      \    
-   -1      10   
-           --   
-          /  \  
-         6   11 
-                
-
-       6        
-     ------     
-    /      \    
-   -1      10   
-            -   
-             \  
-             11 
-```
+<p align="left">
+  <img src="output.png" width="150" alt="tree output">
+</p>
 
 ## 🚧 Planned
 

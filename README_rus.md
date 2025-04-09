@@ -72,24 +72,9 @@ int main() {
 
 ### 🖥️ Вывод
 
-```
-        5        
-     ------     
-    /      \    
-   -1      10   
-           --   
-          /  \  
-         <span style="color: red;">6</span>   <span style="color: red;">11</span> 
-                
-
-       6        
-     ------     
-    /      \    
-   -1      10   
-            -   
-             \  
-             <span style="color: red;">11</span> 
-```
+<p align="left">
+  <img src="output.png" width="150" alt="tree output">
+</p>
 
 
 ## 🚧 В планах
