@@ -22,9 +22,9 @@ A set of C++ c_ontainers under the `lace::` namespace. This project was created 
 ## 📁 Project Structure
 
 ```
-├── src/ 
-│    └── unit_tests.h 
-│           └── *.cc 
+src/ 
+├── unit_tests.h/
+│       └── *.cc 
 ├── lace_array.h 
 ├── lace_queue.h 
 ├── lace_map.h 
